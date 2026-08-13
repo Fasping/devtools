@@ -34,6 +34,22 @@ export const DevToolUI: React.FC<DevtoolUIProps> = ({
 
   const position = getPositionByPlacement(placement, 0, 0);
 
+  const showButtonRef = React.useRef<HTMLButtonElement>(null);
+  const closeButtonRef = React.useRef<HTMLButtonElement>(null);
+  const previousVisible = React.useRef(state.visible);
+
+  // Toggling unmounts the button that was just used, which would drop keyboard
+  // focus onto the body. Move it to the button that replaced it. Only on an
+  // actual transition, so a panel that starts open never steals focus.
+  React.useEffect(() => {
+    if (previousVisible.current === state.visible) {
+      return;
+    }
+
+    previousVisible.current = state.visible;
+    (state.visible ? closeButtonRef : showButtonRef).current?.focus();
+  }, [state.visible]);
+
   return (
     <>
       <Animate
@@ -72,13 +88,18 @@ export const DevToolUI: React.FC<DevtoolUIProps> = ({
             ...styles?.panel,
           }}
         >
-          <Header setVisible={actions.setVisible} control={control} />
+          <Header
+            setVisible={actions.setVisible}
+            control={control}
+            closeButtonRef={closeButtonRef}
+          />
           <Panel control={control} />
         </div>
       </Animate>
 
       {!state.visible && (
         <Button
+          ref={showButtonRef}
           aria-label="Show dev panel"
           title="Show dev panel"
           hideBackground

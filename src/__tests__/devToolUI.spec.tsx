@@ -28,22 +28,32 @@ const App = () => {
 };
 
 describe('DevToolUI', () => {
-  it('opens the panel when the toggle button itself is activated', async () => {
+  it('is operable with the keyboard and keeps focus on the toggle', async () => {
     render(<App />);
 
     // Fails if the button has no accessible name.
-    const toggle = await screen.findByRole('button', {
+    const showButton = await screen.findByRole('button', {
       name: 'Show dev panel',
     });
 
     // Keyboard activation (Enter / Space) dispatches a click on the button,
     // so the handler has to live on the button and not on the svg inside it.
-    fireEvent.click(toggle);
+    fireEvent.click(showButton);
+
+    const closeButton = await screen.findByRole('button', {
+      name: 'Close dev panel',
+    });
+
+    // The button that was just used is unmounted, so focus has to move to the
+    // one that replaced it instead of falling back to the body.
+    await waitFor(() => expect(document.activeElement).toBe(closeButton));
+
+    fireEvent.click(closeButton);
 
     await waitFor(() =>
-      expect(
-        screen.queryByRole('button', { name: 'Show dev panel' }),
-      ).toBeNull(),
+      expect(document.activeElement).toBe(
+        screen.getByRole('button', { name: 'Show dev panel' }),
+      ),
     );
   });
 });

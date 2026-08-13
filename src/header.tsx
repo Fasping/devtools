@@ -7,9 +7,10 @@ import { CircleButton, paraGraphDefaultStyle } from './styled';
 type Props = {
   setVisible: any;
   control: Control;
+  closeButtonRef?: React.RefObject<HTMLButtonElement>;
 };
 
-const Header = ({ setVisible, control }: Props) => {
+const Header = ({ setVisible, control, closeButtonRef }: Props) => {
   const { isValid } = useFormState({
     control,
   });
@@ -42,7 +43,12 @@ const Header = ({ setVisible, control }: Props) => {
         </span>{' '}
         React Hook Form
       </p>
-      <CircleButton title="Close dev panel" onClick={() => setVisible(false)}>
+      <CircleButton
+        ref={closeButtonRef}
+        aria-label="Close dev panel"
+        title="Close dev panel"
+        onClick={() => setVisible(false)}
+      >
         ✕
       </CircleButton>
     </header>
