@@ -79,6 +79,7 @@ export const DevToolUI: React.FC<DevtoolUIProps> = ({
 
       {!state.visible && (
         <Button
+          aria-label="Show dev panel"
           title="Show dev panel"
           hideBackground
           style={{
@@ -91,8 +92,9 @@ export const DevToolUI: React.FC<DevtoolUIProps> = ({
             ...styles?.button,
           }}
           type="button"
+          onClick={() => actions.setVisible(true)}
         >
-          <Logo actions={actions} />
+          <Logo />
         </Button>
       )}
     </>
